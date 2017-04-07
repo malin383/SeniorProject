@@ -62,7 +62,7 @@ public class ProtagonistSprite {
         }
     	
     }
-    public void keyReleased(KeyEvent e) {
+    	public void keyReleased(KeyEvent e) {
         
         int key = e.getKeyCode();
 
