@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.BorderLayout;
+
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,20 +11,30 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable{
-	
+	//OFFSET: How offset something is from a location/origin
 	//Core
+	Player player = new Player(this);
+	
+	int xOffset = 0;
+	int yOffset = 0;
+	
+	InputHandler UInput = new InputHandler(); 
+	
 	BufferedImage  image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);//
 	JFrame frame;
-	public static boolean running = true; //is the game actually running
-	public static final String TITLE = "Game1";
+	public static boolean running = false; //is the game actually running
+	public static final String TITLE = "Game- Test";
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
 	public static final Dimension gameDim = new Dimension(WIDTH, HEIGHT);
 	
-	public int tileWidth = WIDTH/32 + 1;
-	public int tileHeight = HEIGHT/32 + 1; 
+	public int tileWidth = 10;
+	public int tileHeight = 10; 
 	
 	Tile tileArray[][] = new Tile[tileWidth][tileHeight];
+	
+	//Controls
+	public static boolean left, right, up, down;
 	
 	
 	public void run(){
@@ -56,6 +67,7 @@ public class Game extends Canvas implements Runnable{
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		this.addKeyListener(UInput);
 		
 		init();
 		
@@ -65,7 +77,7 @@ public class Game extends Canvas implements Runnable{
 	}
 	public void init(){
 		for(int  x = 0; x < tileWidth; x++){
-			for(int y = 0; y > tileHeight; y++){
+			for(int y = 0; y < tileHeight; y++){
 				tileArray[x][y] = new Tile(x * 32, y * 32, this);
 			}
 			
@@ -74,13 +86,29 @@ public class Game extends Canvas implements Runnable{
 	
 	public void tick(){
 		for(int  x = 0; x < tileWidth; x++){
-			for(int y = 0; y > tileHeight; y++){
-				tileArray[x][y] = new Tile(x * 32, y * 32, this);
+			for(int y = 0; y < tileHeight; y++){
+				tileArray[x][y].tick(this);
 			}
-			
 		}
-		
+		moveMap();
+		player.tick(this);
 	}
+	
+	private void moveMap(){
+		if(left){
+			xOffset++;//set position to x - 1
+		}
+		else if(right){
+			xOffset--;
+		}
+		else if(up){
+			yOffset++;
+		}
+		else if(down){
+			yOffset--;
+		}
+	}
+	
 	public void render(){
 		BufferStrategy bs = getBufferStrategy();
 		if(bs == null){
@@ -89,15 +117,17 @@ public class Game extends Canvas implements Runnable{
 		}
 		
 		Graphics g = bs.getDrawGraphics();
-		
+
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		
 		for(int  x = 0; x < tileWidth; x++){
-			for(int y = 0; y > tileHeight; y++){
-				tileArray[x][y].render(g);
+			for(int y = 0; y < tileHeight; y++){
+				if(tileArray[x][y].x >= 0 - 32 && tileArray[x][y].x <= getWidth() + 32 & tileArray[x][y].y >= 0 - 32 && tileArray[x][y].y <= getHeight() + 32){
+					tileArray[x][y].render(g);
+				}
 			}
-			
 		}
+		player.render(g);
 		
 		g.dispose();
 		bs.show();
