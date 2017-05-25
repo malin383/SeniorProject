@@ -3,12 +3,14 @@
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable{
@@ -35,8 +37,8 @@ public class Game extends Canvas implements Runnable{
 		public static final Dimension gameDim = new Dimension(WIDTH, HEIGHT);
 		Thread thread;
 		
-		public int tileWidth = 600;
-		public int tileHeight = 800; 
+		public int tileWidth = 10;
+		public int tileHeight = 10; 
 		
 		Tile tileArray[][] = new Tile[tileWidth][tileHeight];
 		
@@ -133,31 +135,68 @@ public class Game extends Canvas implements Runnable{
 			}
 			
 			Graphics g = bs.getDrawGraphics();
+			BufferedImage idle1 = null, down1 = null, down2 = null, idle2 = null;
+			
+			
+			try {
+				idle1 = ImageIO.read(new File("resources/idle.png"));
+				down1 = ImageIO.read(new File("images/down2.png"));
+				down2 = ImageIO.read(new File("down1.png"));
+				idle2 = ImageIO.read(new File("idle2.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+			g.drawImage(idle1, 0, 0, null);
+			//g.drawImage(a.getImage(), 0, 0, null);
 			
-			for(int  x = 0; x < tileWidth; x++){
+			/*for(int  x = 0; x < tileWidth; x++){
 				for(int y = 0; y < tileHeight; y++){
 						tileArray[x][y].render(g);
 				}
-			}
-			
+			}*/
+			a = new Animation();
+			a.addScene(idle1, 500);
+			a.addScene(down1, 500);
+			a.addScene(idle2, 500);
+			a.addScene(down2, 500);
 			
 			g.dispose();
 			bs.show();
 		}
+		//BufferedImage idle1 = null, down1 = null, down2 = null, idle2 = null;
 		
 		public void loadPics(){
-			Image idle1 = new ImageIcon("C:\\Users\\malin383\\Pictures\\Sprites\\images\\Palette_01.png").getImage();
-			Image idle2 = new ImageIcon("C:\\Users\\malin383\\Pictures\\Sprites\\images\\Palette_02.png").getImage();
-			Image idle3 = new ImageIcon("C:\\Users\\malin383\\Pictures\\Sprites\\images\\Palette_03.png").getImage();
+			
+			/*try {
+				idle1 = ImageIO.read(new File("resources/idle.png"));
+				down1 = ImageIO.read(new File("images/down2.png"));
+				down2 = ImageIO.read(new File("down1.png"));
+				idle2 = ImageIO.read(new File("idle2.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 			a = new Animation();
-			a.addScene(idle1, 250);
-			a.addScene(idle2, 250);
-			a.addScene(idle3, 250);
+			a.addScene(idle1, 500);
+			a.addScene(down1, 500);
+			a.addScene(idle2, 500);
+			a.addScene(down2, 500);*/
 			
 			
 		}
+		//Display mode, settings for graphics and []
+		public void run(DisplayMode dm){
+			try{
+				loadPics();
+				movieLoop();
+			}finally{
+				Graphics g = image.getGraphics();
+			}
+		}
+		
 		public void movieLoop(){
 			long startingTime = System.currentTimeMillis();
 			long cumTime = startingTime;
@@ -167,7 +206,20 @@ public class Game extends Canvas implements Runnable{
 				cumTime += timePassed;
 				a.update(timePassed);
 				
+				Graphics g = image.getGraphics();
+				draw(g);
+				g.dispose();
+				
+				try{
+					Thread.sleep(20);
+				}catch(Exception ex){}
+				
+				
 			}
+		}
+		public void draw(Graphics g){
+			g.drawImage(idle1, 0, 0, null);
+			g.drawImage(a.getImage(), 0, 0, null);
 		}
 
 
