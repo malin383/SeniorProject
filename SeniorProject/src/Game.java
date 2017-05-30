@@ -1,18 +1,20 @@
 
 
 import java.awt.BorderLayout;
-
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable{
@@ -23,9 +25,15 @@ public class Game extends Canvas implements Runnable{
 		/**
 		 * 
 		 */
+
+		private Image idle1 = null, down1 = null, down2 = null, idle2 = null;
+		private BufferedImage map = null;
 		private static final long serialVersionUID = 1L;
-		int mapX = 100;
-		int mapY = 100;
+	
+		private boolean loaded = false;
+		
+		int imageX = 0;
+		int imageY = 0;
 		Game game;
 		
 		InputHandler UInput = new InputHandler(); 
@@ -49,7 +57,7 @@ public class Game extends Canvas implements Runnable{
 		
 		public void run(){
 			while(running){
-				tick();
+				tick();//refreshes state of game
 				
 				try{
 					thread.sleep(1);
@@ -72,9 +80,9 @@ public class Game extends Canvas implements Runnable{
 			setMinimumSize(gameDim);
 			setMaximumSize(gameDim);
 			setPreferredSize(gameDim);
-			frame = new JFrame(TITLE);
+			frame = new JFrame(TITLE);//Window for game is initialized
 			
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//closes window
 			frame.setLayout(new BorderLayout());
 			
 			frame.add(this, BorderLayout.CENTER);
@@ -89,14 +97,39 @@ public class Game extends Canvas implements Runnable{
 			requestFocus();			
 			
 		}
+		public void tick(){//refreshes state of game
+			BufferStrategy bs = getBufferStrategy();
+			if(bs == null){
+				createBufferStrategy(3);
+				return;
+			}
+			Graphics g = bs.getDrawGraphics();	
+			
+			moveMap();
+			loadPics();
+		}
+		
+		public void moveMap(){
+			if(left){
+				imageX--;
+				System.out.println(imageX);
+			}
+			if(right){
+				imageX++;
+				System.out.println(imageX);
+			}
+			if(up){
+				imageY++;
+				System.out.println(imageY);
+			}
+			if(down){
+				imageY--;
+				System.out.println(imageY);
+			}
+		}
 		
 		public void run(DisplayMode dm){//something movie loop that we're running; possibly put in render()??
-			try{
-				loadPics();
-				movieLoop();
-			}finally{
-				Graphics g = image.getGraphics();
-			}
+
 		}
 		public void loadPics(){
 			BufferStrategy bs = getBufferStrategy();
@@ -105,30 +138,37 @@ public class Game extends Canvas implements Runnable{
 				return;
 			}
 			Graphics g = bs.getDrawGraphics();
-			g.drawImage(image, 0, 0, Color.BLACK, null);	
+			idle1 = new ImageIcon("resources/idle.png").getImage();
+			down1 = new ImageIcon("resources/down1.png").getImage();
+			down2 = new ImageIcon("resources/down2.png").getImage();
+			idle2 = new ImageIcon("resources/idle2.png").getImage();
+		
 			
-			
-			BufferedImage idle1 = null, down1 = null, down2 = null, idle2 = null;
-			BufferedImage map = null;
+			loaded = true;
+			if(loaded){
+				System.out.println("True");
+			}
 			
 			try {
-				idle1 = ImageIO.read(new File("resources/idle.png"));
-				down1 = ImageIO.read(new File("resources/down2.png"));
-				down2 = ImageIO.read(new File("resources/down1.png"));
-				idle2 = ImageIO.read(new File("resources/idle2.png"));
-				map = ImageIO.read(new File("resources/map.png"));
+				map = ImageIO.read(new File("resources/azalea.png"));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} 
 
 			g.drawImage(map, 0, 0, null);
-			
-			a = new Animation();
-			a.addScene(idle1, 500);
-			a.addScene(down1, 500);
-			a.addScene(idle2, 500);
-			a.addScene(down2, 500);
+			paint(g);
+		
+		}
+		
+		public void paint(Graphics g){
+			System.out.println("render");
+			if(g instanceof Graphics2D){
+				Graphics2D g2 = (Graphics2D)g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			}
+			if(loaded){
+				System.out.println("loaded");
+				g.drawImage(map, imageX, imageY, null);
+			}
 		}
 		
 		public void movieLoop(){
