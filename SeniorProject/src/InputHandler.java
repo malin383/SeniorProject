@@ -24,7 +24,7 @@ public class InputHandler implements KeyListener /*"Listen" to key inputs*/{
 		}
 	}
 
-	
+		 
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		

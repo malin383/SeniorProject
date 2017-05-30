@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+//11:33
 public class Game extends Canvas implements Runnable{
 	//WASD IS USED FOR CONTROLS! DO NOT FORGET!
 	//OFFSET: How offset something is from a location/origin
@@ -41,7 +42,7 @@ public class Game extends Canvas implements Runnable{
 		
 		BufferedImage  image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);//
 		JFrame frame;
-		public static boolean running = true; //is the game actually running
+		public static boolean running = false; //is the game actually running
 		public static final String TITLE = "Game- Test";
 		public static final int WIDTH = 1024;
 		public static final int HEIGHT = 768;
@@ -56,9 +57,9 @@ public class Game extends Canvas implements Runnable{
 		private Animation a;
 		
 		public void run(){
+			
 			while(running){
 				tick();//refreshes state of game
-				
 				try{
 					thread.sleep(1);
 				}catch(Exception e){
@@ -97,6 +98,14 @@ public class Game extends Canvas implements Runnable{
 			requestFocus();			
 			
 		}
+		public void init(){
+			BufferStrategy bs = getBufferStrategy();
+			if(bs == null){
+				createBufferStrategy(3);
+				return;
+			}
+			Graphics g = bs.getDrawGraphics();	
+		}
 		public void tick(){//refreshes state of game
 			BufferStrategy bs = getBufferStrategy();
 			if(bs == null){
@@ -106,7 +115,7 @@ public class Game extends Canvas implements Runnable{
 			Graphics g = bs.getDrawGraphics();	
 			
 			moveMap();
-			loadPics();
+			
 		}
 		
 		public void moveMap(){
@@ -128,10 +137,8 @@ public class Game extends Canvas implements Runnable{
 			}
 		}
 		
-		public void run(DisplayMode dm){//something movie loop that we're running; possibly put in render()??
-
-		}
 		public void loadPics(){
+
 			BufferStrategy bs = getBufferStrategy();
 			if(bs == null){
 				createBufferStrategy(3);
@@ -142,9 +149,10 @@ public class Game extends Canvas implements Runnable{
 			down1 = new ImageIcon("resources/down1.png").getImage();
 			down2 = new ImageIcon("resources/down2.png").getImage();
 			idle2 = new ImageIcon("resources/idle2.png").getImage();
-		
+			System.out.println("Hello");
 			
 			loaded = true;
+			
 			if(loaded){
 				System.out.println("True");
 			}
@@ -153,10 +161,7 @@ public class Game extends Canvas implements Runnable{
 				map = ImageIO.read(new File("resources/azalea.png"));
 			} catch (IOException e) {
 			} 
-
-			g.drawImage(map, 0, 0, null);
-			paint(g);
-		
+			
 		}
 		
 		public void paint(Graphics g){
@@ -181,7 +186,6 @@ public class Game extends Canvas implements Runnable{
 				a.update(timePassed);
 				
 				Graphics g = image.getGraphics();
-				//draw(g);
 				g.dispose();
 				
 				try{
