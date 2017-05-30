@@ -1,5 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Tile {
 	int x, y;
@@ -14,17 +19,9 @@ public class Tile {
 	}
 	public void tick(Game game){
 		this.game = game;
-		
-		x = oX + game.xOffset;
-		y = oY + game.yOffset;
+	
 	}
 	public void render(Graphics g){
-			g.setColor(Color.WHITE);
-			g.fillRect(x, y, 32, 32);
-			
-			g.setColor(Color.BLACK);
-			g.drawRect(x, y, 32, 32);
-			
+		BufferedImage map = null;
 	}
-
 }
