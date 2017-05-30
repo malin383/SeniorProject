@@ -3,7 +3,6 @@
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
-import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,29 +13,32 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 //11:33
 public class Game extends Canvas implements Runnable{
-	//WASD IS USED FOR CONTROLS! DO NOT FORGET!
-	//OFFSET: How offset something is from a location/origin
 		//Core
 		
 		/**
 		 * 
 		 */
-
+		//SPRITES
 		private Image idle1 = null, down1 = null, down2 = null, idle2 = null;
-		private BufferedImage map = null;
+		private Image lefti = null, left1 = null, lefta = null, left2 = null;
+		private Image righti = null, right1 = null, righta = null, right2 = null;
+		private Image upi = null, up1 = null, upa = null, up2 = null;
+		private Image map = null;
 		private static final long serialVersionUID = 1L;
-	
+		
+		//LOADED OR NOT?
 		private boolean loaded = false;
 		
+		//POSITION
 		int imageX = 0;
 		int imageY = 0;
 		Game game;
 		
+		//INPUT AND STUFF?
 		InputHandler UInput = new InputHandler(); 
 		Player player = new Player(this);
 		
@@ -54,14 +56,14 @@ public class Game extends Canvas implements Runnable{
 		public static boolean left, right, up, down;
 		
 		//Animation??
-		private Animation a;
+		private Animation downA, upA, leftA, rightA;
 		
 		public void run(){
 			
 			while(running){
 				tick();//refreshes state of game
 				try{
-					thread.sleep(1);
+					Thread.sleep(18);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -89,12 +91,12 @@ public class Game extends Canvas implements Runnable{
 			frame.add(this, BorderLayout.CENTER);
 			frame.pack();
 			
-			frame.setResizable(true);
+			frame.setResizable(false);
 			frame.setLocationRelativeTo(null);
 			frame.setVisible(true);
 			this.addKeyListener(UInput);
 			loadPics();
-			
+
 			requestFocus();			
 			
 		}
@@ -113,8 +115,9 @@ public class Game extends Canvas implements Runnable{
 				return;
 			}
 			Graphics g = bs.getDrawGraphics();	
-			
 			moveMap();
+			//paint(g);
+			repaint();
 			
 		}
 		
@@ -138,40 +141,53 @@ public class Game extends Canvas implements Runnable{
 		}
 		
 		public void loadPics(){
-
-			BufferStrategy bs = getBufferStrategy();
-			if(bs == null){
-				createBufferStrategy(3);
-				return;
-			}
-			Graphics g = bs.getDrawGraphics();
-			idle1 = new ImageIcon("resources/idle.png").getImage();
-			down1 = new ImageIcon("resources/down1.png").getImage();
-			down2 = new ImageIcon("resources/down2.png").getImage();
-			idle2 = new ImageIcon("resources/idle2.png").getImage();
-			System.out.println("Hello");
-			
 			loaded = true;
-			
-			if(loaded){
-				System.out.println("True");
-			}
-			
 			try {
+				idle1 =  ImageIO.read(new File("resources/idle.png"));
+				down1 =  ImageIO.read(new File("resources/down1.png"));
+				down2 =  ImageIO.read(new File("resources/down2.png"));
+				idle2 =  ImageIO.read(new File("resources/idle2.png"));
 				map = ImageIO.read(new File("resources/azalea.png"));
+				lefti =  ImageIO.read(new File("resources/lefti.png"));
+				left1 =  ImageIO.read(new File("resources/left1.png"));
+				left2 =  ImageIO.read(new File("resources/left2.png"));
+				lefta =  ImageIO.read(new File("resources/lefta.png"));
+				righti = ImageIO.read(new File("resources/righti.png"));
+				right1 =  ImageIO.read(new File("resources/right1.png"));
+				right2 =  ImageIO.read(new File("resources/right2.png"));
+				righta =  ImageIO.read(new File("resources/righta.png"));
+				upi =  ImageIO.read(new File("resources/upi.png"));
+				up1 = ImageIO.read(new File("resources/up1.png"));
+				upa =  ImageIO.read(new File("resources/upa.png"));
+				up2 = ImageIO.read(new File("resources/up2.png"));
+				
 			} catch (IOException e) {
-			} 
+			}
+			downA.addScene(idle1, 500);
+			downA.addScene(down1, 500);
+			downA.addScene(idle2, 500);
+			downA.addScene(down2, 500);
+			leftA.addScene(lefti, 500);
+			leftA.addScene(left1, 500);
+			leftA.addScene(lefta, 500);
+			leftA.addScene(left2, 500);
+			rightA.addScene(righti, 500);
+			rightA.addScene(right1, 500);
+			rightA.addScene(righta, 500);
+			rightA.addScene(right2, 500);
+			upA.addScene(upi, 500);
+			upA.addScene(up1, 500);
+			upA.addScene(upa, 500);
+			upA.addScene(up2, 500);
 			
 		}
-		
 		public void paint(Graphics g){
-			System.out.println("render");
 			if(g instanceof Graphics2D){
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			}
+			loaded = true;
 			if(loaded){
-				System.out.println("loaded");
 				g.drawImage(map, imageX, imageY, null);
 			}
 		}
@@ -183,7 +199,7 @@ public class Game extends Canvas implements Runnable{
 			while(cumTime - startingTime < 5000){
 				long timePassed = System.currentTimeMillis() - cumTime;
 				cumTime += timePassed;
-				a.update(timePassed);
+				//a.update(timePassed);
 				
 				Graphics g = image.getGraphics();
 				g.dispose();
