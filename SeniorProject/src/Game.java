@@ -21,13 +21,14 @@ public class Game extends Canvas implements Runnable{
 		
 		/**
 		 * 
-		 */
+		 */	
 		//SPRITES
 		private Image idle1 = null, down1 = null, down2 = null, idle2 = null;
 		private Image lefti = null, left1 = null, lefta = null, left2 = null;
 		private Image righti = null, right1 = null, righta = null, right2 = null;
 		private Image upi = null, up1 = null, upa = null, up2 = null;
 		private Image map = null;
+		private Image userIdle = null;
 		private static final long serialVersionUID = 1L;
 		
 		//LOADED OR NOT?
@@ -40,14 +41,13 @@ public class Game extends Canvas implements Runnable{
 		
 		//INPUT AND STUFF?
 		InputHandler UInput = new InputHandler(); 
-		Player player = new Player(this);
 		
 		BufferedImage  image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);//
 		JFrame frame;
 		public static boolean running = false; //is the game actually running
 		public static final String TITLE = "Game- Test";
-		public static final int WIDTH = 1024;
-		public static final int HEIGHT = 768;
+		public static final int WIDTH = 256;
+		public static final int HEIGHT = 192;
 		public static final Dimension gameDim = new Dimension(WIDTH, HEIGHT);
 		Thread thread;
 		
@@ -63,7 +63,7 @@ public class Game extends Canvas implements Runnable{
 			while(running){
 				tick();//refreshes state of game
 				try{
-					Thread.sleep(18);
+					Thread.sleep(60);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -101,12 +101,7 @@ public class Game extends Canvas implements Runnable{
 			
 		}
 		public void init(){
-			BufferStrategy bs = getBufferStrategy();
-			if(bs == null){
-				createBufferStrategy(3);
-				return;
-			}
-			Graphics g = bs.getDrawGraphics();	
+			
 		}
 		public void tick(){//refreshes state of game
 			BufferStrategy bs = getBufferStrategy();
@@ -121,33 +116,43 @@ public class Game extends Canvas implements Runnable{
 			
 		}
 		
-		public void moveMap(){
+		public synchronized void moveMap(){
+			Thread threadd = new Thread();
 			if(left){
-				imageX--;
+				imageX ++;
 				System.out.println(imageX);
+				movieLoop(leftA);
+				userIdle = lefti;
 			}
 			if(right){
-				imageX++;
+				imageX --;
 				System.out.println(imageX);
+				movieLoop(rightA);
+				userIdle = righti;
 			}
 			if(up){
-				imageY++;
+				imageY ++;
 				System.out.println(imageY);
+				movieLoop(upA);
+				userIdle = upi;
 			}
 			if(down){
-				imageY--;
+				imageY --;
 				System.out.println(imageY);
+				movieLoop(downA);
+				userIdle = idle1;
 			}
 		}
 		
 		public void loadPics(){
+			
 			loaded = true;
 			try {
 				idle1 =  ImageIO.read(new File("resources/idle.png"));
 				down1 =  ImageIO.read(new File("resources/down1.png"));
 				down2 =  ImageIO.read(new File("resources/down2.png"));
 				idle2 =  ImageIO.read(new File("resources/idle2.png"));
-				map = ImageIO.read(new File("resources/azalea.png"));
+				map = ImageIO.read(new File("resources/newbark.png"));
 				lefti =  ImageIO.read(new File("resources/lefti.png"));
 				left1 =  ImageIO.read(new File("resources/left1.png"));
 				left2 =  ImageIO.read(new File("resources/left2.png"));
@@ -163,6 +168,11 @@ public class Game extends Canvas implements Runnable{
 				
 			} catch (IOException e) {
 			}
+			downA = new Animation();
+			upA = new Animation();
+			rightA = new Animation();
+			leftA = new Animation();
+			
 			downA.addScene(idle1, 500);
 			downA.addScene(down1, 500);
 			downA.addScene(idle2, 500);
@@ -180,6 +190,15 @@ public class Game extends Canvas implements Runnable{
 			upA.addScene(upa, 500);
 			upA.addScene(up2, 500);
 			
+			userIdle = idle1;
+			
+			BufferStrategy bs = getBufferStrategy();
+			if(bs == null){
+				createBufferStrategy(3);
+				return;
+			}
+			Graphics c = bs.getDrawGraphics();
+			c.drawImage(idle1, 0, 0, null);
 		}
 		public void paint(Graphics g){
 			if(g instanceof Graphics2D){
@@ -189,27 +208,33 @@ public class Game extends Canvas implements Runnable{
 			loaded = true;
 			if(loaded){
 				g.drawImage(map, imageX, imageY, null);
+				g.drawImage(userIdle, WIDTH/2, HEIGHT/2, null);
 			}
 		}
 		
-		public void movieLoop(){
+		public void movieLoop(Animation a){
 			long startingTime = System.currentTimeMillis();
 			long cumTime = startingTime;
 			
-			while(cumTime - startingTime < 5000){
+			while(cumTime - startingTime < 1){
 				long timePassed = System.currentTimeMillis() - cumTime;
 				cumTime += timePassed;
-				//a.update(timePassed);
+				a.update(timePassed);
+				System.out.println(cumTime);
 				
-				Graphics g = image.getGraphics();
+				Graphics g = frame.getGraphics();
+				draw(g, a);
 				g.dispose();
 				
 				try{
 					Thread.sleep(20);
-				}catch(Exception ex){}
-				
-				
+				}catch(Exception ex){
+				}
 			}
+		}
+		public void draw(Graphics g, Animation a){
+			g.drawImage(map, imageX, imageY, null);
+			g.drawImage(a.getImage(), WIDTH/2, HEIGHT/2, null);
 		}
 
 
