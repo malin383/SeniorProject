@@ -45,9 +45,9 @@ public class Game extends Canvas implements Runnable{
 		BufferedImage  image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);//
 		JFrame frame;
 		public static boolean running = false; //is the game actually running
-		public static final String TITLE = "Game- Test";
-		public static final int WIDTH = 256;
-		public static final int HEIGHT = 192;
+		public static final String TITLE = "Java 2D Game Engine";
+		public static final int WIDTH = 640;
+		public static final int HEIGHT = 480;
 		public static final Dimension gameDim = new Dimension(WIDTH, HEIGHT);
 		Thread thread;
 		
@@ -100,9 +100,6 @@ public class Game extends Canvas implements Runnable{
 			requestFocus();			
 			
 		}
-		public void init(){
-			
-		}
 		public void tick(){//refreshes state of game
 			BufferStrategy bs = getBufferStrategy();
 			if(bs == null){
@@ -119,26 +116,26 @@ public class Game extends Canvas implements Runnable{
 		public synchronized void moveMap(){
 			Thread threadd = new Thread();
 			if(left){
-				imageX ++;
-				System.out.println(imageX);
+				imageX += 32;
+				System.out.println(imageX +"x");
 				movieLoop(leftA);
 				userIdle = lefti;
 			}
 			if(right){
-				imageX --;
-				System.out.println(imageX);
+				imageX -=32;
+				System.out.println(imageX + "x");
 				movieLoop(rightA);
 				userIdle = righti;
 			}
 			if(up){
-				imageY ++;
-				System.out.println(imageY);
+				imageY +=32;
+				System.out.println(imageY + "y");
 				movieLoop(upA);
 				userIdle = upi;
 			}
 			if(down){
-				imageY --;
-				System.out.println(imageY);
+				imageY -=32;
+				System.out.println(imageY + "y");
 				movieLoop(downA);
 				userIdle = idle1;
 			}
@@ -215,12 +212,12 @@ public class Game extends Canvas implements Runnable{
 		public void movieLoop(Animation a){
 			long startingTime = System.currentTimeMillis();
 			long cumTime = startingTime;
+			int count = 0;
 			
-			while(cumTime - startingTime < 1){
+			while(cumTime - startingTime < 500){
 				long timePassed = System.currentTimeMillis() - cumTime;
 				cumTime += timePassed;
-				a.update(timePassed);
-				System.out.println(cumTime);
+				a.update(count,timePassed);//UPDATE!!!
 				
 				Graphics g = frame.getGraphics();
 				draw(g, a);

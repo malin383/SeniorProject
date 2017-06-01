@@ -23,6 +23,7 @@ public class Launcher extends Canvas{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//closes window
 		frame.setLayout(new BorderLayout());
 		
+		frame.pack();
 		frame.setResizable(true);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -32,7 +33,7 @@ public class Launcher extends Canvas{
 		
 		g.drawImage(logo, 256/2, 192/2, null);
 		
-		while(cumTime - logoTime < 5000){
+		while(cumTime - logoTime < 2000){
 			long timePassed = System.currentTimeMillis() - cumTime;
 			cumTime += timePassed;
 			
