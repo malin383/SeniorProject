@@ -38,6 +38,7 @@ public class Animation {//Animation class handles animation
 				System.out.println("reset");
 				movieTime = 0;
 				sceneIndex = 0;
+				count = 0;
 			}
 			while(sceneTime > getScene(sceneIndex).endTime){
 				System.out.println(sceneIndex);

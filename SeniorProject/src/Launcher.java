@@ -14,7 +14,7 @@ public class Launcher extends Canvas{
 		long cumTime = logoTime;
 		Image logo = null;	
 		try {
-			logo =  ImageIO.read(new File("resources/java.gif"));
+			logo =  ImageIO.read(new File("resources/java.png"));
 		} catch (IOException e) {
 		}
 		
@@ -31,7 +31,7 @@ public class Launcher extends Canvas{
 		frame.setSize(256*3, 192*3);
 		Graphics g = frame.getGraphics();
 		
-		g.drawImage(logo, 256/2, 192/2, null);
+		g.drawImage(logo, 0, 0, null);
 		
 		while(cumTime - logoTime < 2000){
 			long timePassed = System.currentTimeMillis() - cumTime;

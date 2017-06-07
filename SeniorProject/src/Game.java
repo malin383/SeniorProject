@@ -46,8 +46,8 @@ public class Game extends Canvas implements Runnable{
 		JFrame frame;
 		public static boolean running = false; //is the game actually running
 		public static final String TITLE = "Java 2D Game Engine";
-		public static final int WIDTH = 640;
-		public static final int HEIGHT = 480;
+		public static final int WIDTH = 480;
+		public static final int HEIGHT = 360;
 		public static final Dimension gameDim = new Dimension(WIDTH, HEIGHT);
 		Thread thread;
 		
